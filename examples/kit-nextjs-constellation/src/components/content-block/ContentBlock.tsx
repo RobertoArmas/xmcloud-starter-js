@@ -1,10 +1,4 @@
-import {
-  Text,
-  RichText,
-  Field,
-  withDatasourceCheck,
-  GetComponentServerProps,
-} from '@sitecore-content-sdk/nextjs';
+import { Text, RichText, Field, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { JSX } from 'react';
 
@@ -28,15 +22,5 @@ const ContentBlock = ({ fields }: ContentBlockProps): JSX.Element => {
       <RichText className="contentDescription" field={fields.content} />
     </div>
   );
-};
-
-export const getComponentServerProps: GetComponentServerProps = async (
-  rendering,
-  layoutData,
-  context
-) => {
-  return {
-    test: 'hello',
-  };
 };
 export default withDatasourceCheck()<ContentBlockProps>(ContentBlock);

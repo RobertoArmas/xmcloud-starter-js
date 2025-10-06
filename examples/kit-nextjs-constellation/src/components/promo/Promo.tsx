@@ -6,8 +6,14 @@ import {
   ImageField,
   Field,
   LinkField,
+  GetComponentServerProps,
+  useSitecore,
+  ComponentRendering,
+  LayoutServiceData,
 } from '@sitecore-content-sdk/nextjs';
 import { ComponentProps } from 'lib/component-props';
+import { hasContent } from '@constellation4sitecore-content-sdk/nextjs';
+import { SiteResult, TestService } from 'src/services/test-service';
 
 interface Fields {
   PromoIcon: ImageField;
@@ -18,6 +24,7 @@ interface Fields {
 
 type PromoProps = ComponentProps & {
   fields: Fields;
+  sites: SiteResult[];
 };
 
 interface PromoContentProps extends PromoProps {
@@ -27,6 +34,9 @@ interface PromoContentProps extends PromoProps {
 const PromoContent = (props: PromoContentProps): JSX.Element => {
   const { fields, params, renderText } = props;
   const { styles, RenderingIdentifier: id } = params;
+  const ctx = useSitecore();
+
+  console.log('sites', props.sites);
 
   const Wrapper = ({ children }: { children: JSX.Element }): JSX.Element => (
     <div className={`component promo ${styles}`} id={id}>
@@ -45,13 +55,27 @@ const PromoContent = (props: PromoContentProps): JSX.Element => {
   return (
     <Wrapper>
       <>
-        <div className="field-promoicon">
-          <ContentSdkImage field={fields.PromoIcon} />
-        </div>
+        {hasContent(ctx, fields.PromoIcon) && (
+          <div className="field-promoicon">
+            <ContentSdkImage field={fields.PromoIcon} />
+          </div>
+        )}
+
         <div className="promo-text">{renderText(fields)}</div>
       </>
     </Wrapper>
   );
+};
+
+export const getComponentServerProps: GetComponentServerProps = async (
+  _: ComponentRendering,
+  layoutData: LayoutServiceData
+) => {
+  const testService = new TestService(layoutData);
+  const sites = await testService.getSites();
+  return {
+    sites,
+  };
 };
 
 export const Default = (props: PromoProps): JSX.Element => {
