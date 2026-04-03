@@ -1,5 +1,6 @@
 import React from "react";
 import { Field, RichText, Text } from "@sitecore-content-sdk/nextjs";
+import { cacheLife, cacheTag } from "next/cache";
 
 type Fields = {
   heading?: Field<string>;
@@ -17,7 +18,7 @@ type DefaultProps = {
   rendering?: Rendering;
 };
 
-export const SiaVariant = (
+export const SiaVariant = async (
   props: DefaultProps = {
     fields: {
       heading: { value: "" } as Field<string>,
@@ -25,7 +26,12 @@ export const SiaVariant = (
     },
     rendering: {},
   }
-): React.JSX.Element | null => {
+): Promise<React.JSX.Element | null> => {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("pokeapi");
+  const response = await fetch("https://pokeapi.co/api/v2/pokemon/ditto");
+  const data = await response.json();
   if (!props?.fields) return null;
   const fields = props?.fields;
   const layout = props?.rendering?.params?.layout || "stack";
@@ -69,6 +75,7 @@ export const SiaVariant = (
         <article className="prose prose-slate max-w-none">
           <RichText field={fields?.copy as Field<string>} />
         </article>
+        <div>Poke API Response: {data.name}</div>
       </div>
     </section>
   );
