@@ -5,6 +5,7 @@ import { Form } from '@sitecore-content-sdk/nextjs';
 
 // end of built-in components
 import * as PartialDesignDynamicPlaceholder from 'src/components/partial-design-dynamic-placeholder/PartialDesignDynamicPlaceholder';
+import * as ContentBlockSiaVariant from 'src/components/content/ContentBlock.SiaVariant';
 import * as ContentBlock from 'src/components/content/ContentBlock';
 
 export const componentMap = new Map<string, NextjsContentSdkComponent>([
@@ -12,7 +13,7 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['FEaaSWrapper', FEaaSServerWrapper],
   ['Form', { ...Form, componentType: 'client' }],
   ['PartialDesignDynamicPlaceholder', { ...PartialDesignDynamicPlaceholder }],
-  ['ContentBlock', { ...ContentBlock }],
+  ['ContentBlock', { ...ContentBlockSiaVariant, ...ContentBlock }],
 ]);
 
 export default componentMap;
