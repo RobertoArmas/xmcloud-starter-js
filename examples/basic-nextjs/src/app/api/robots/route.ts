@@ -1,9 +1,8 @@
-import { createRobotsRouteHandler } from '@sitecore-content-sdk/nextjs/route-handler';
-import sites from '.sitecore/sites.json';
-import client from 'lib/sitecore-client';
-import { NextRequest, NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
+import { createRobotsRouteHandler } from "@sitecore-content-sdk/nextjs/route-handler";
+import sites from ".sitecore/sites.json";
+import client from "lib/sitecore-client";
+import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 /**
  * API route for serving robots.txt
@@ -128,6 +127,7 @@ Sitemap: ${baseUrl}/sitemap-llm.xml
  * Custom GET handler that ensures AI crawlers and search engines can access the site
  */
 export async function GET(request: NextRequest) {
+  await headers();
   try {
     // Try to get robots.txt from Sitecore first
     const response = await sitecoreGET(request);
@@ -136,15 +136,16 @@ export async function GET(request: NextRequest) {
 
     // Check if Sitecore returned a blocking robots.txt
     // Common blocking patterns: "Disallow: /" without any "Allow:" rules
-    const hasBlockingRule = text.includes('Disallow: /') && !text.includes('Allow:');
-    
+    const hasBlockingRule =
+      text.includes("Disallow: /") && !text.includes("Allow:");
+
     if (hasBlockingRule) {
       // Return our permissive robots.txt with AI crawler allowances
       const baseUrl = new URL(request.url).origin;
       return new NextResponse(generateRobotsContent(baseUrl), {
         headers: {
-          'Content-Type': 'text/plain',
-          'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+          "Content-Type": "text/plain",
+          "Cache-Control": "public, max-age=3600, s-maxage=3600",
         },
       });
     }
@@ -155,19 +156,19 @@ export async function GET(request: NextRequest) {
 
     return new NextResponse(enhancedRobots, {
       headers: {
-        'Content-Type': 'text/plain',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+        "Content-Type": "text/plain",
+        "Cache-Control": "public, max-age=3600, s-maxage=3600",
       },
     });
   } catch (error) {
     // If Sitecore fails, return our permissive robots.txt
-    console.error('Error fetching robots.txt from Sitecore:', error);
+    console.error("Error fetching robots.txt from Sitecore:", error);
     const baseUrl = new URL(request.url).origin;
 
     return new NextResponse(generateRobotsContent(baseUrl), {
       headers: {
-        'Content-Type': 'text/plain',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+        "Content-Type": "text/plain",
+        "Cache-Control": "public, max-age=3600, s-maxage=3600",
       },
     });
   }
@@ -177,25 +178,39 @@ export async function GET(request: NextRequest) {
  * Ensures AI crawler access rules are present in the robots.txt
  * If they're missing, appends them to the existing content
  */
-function ensureAICrawlerAccess(existingContent: string, baseUrl: string): string {
-  const aiCrawlers = ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'ChatGPT-User', 'anthropic-ai'];
-  const missingCrawlers = aiCrawlers.filter(crawler => !existingContent.includes(crawler));
+function ensureAICrawlerAccess(
+  existingContent: string,
+  baseUrl: string
+): string {
+  const aiCrawlers = [
+    "GPTBot",
+    "ClaudeBot",
+    "PerplexityBot",
+    "ChatGPT-User",
+    "anthropic-ai",
+  ];
+  const missingCrawlers = aiCrawlers.filter(
+    (crawler) => !existingContent.includes(crawler)
+  );
 
   let enhanced = existingContent;
 
   // Add missing AI crawler rules
   if (missingCrawlers.length > 0) {
-    const aiRules = missingCrawlers.map(crawler => 
-      `\n# AI Crawler - ${crawler}\nUser-agent: ${crawler}\nAllow: /`
-    ).join('\n');
-    
+    const aiRules = missingCrawlers
+      .map(
+        (crawler) =>
+          `\n# AI Crawler - ${crawler}\nUser-agent: ${crawler}\nAllow: /`
+      )
+      .join("\n");
+
     enhanced += `\n\n# ==============================================\n# AI Crawlers - Added for discoverability\n# ==============================================\n${aiRules}`;
   }
 
   // Ensure sitemap is present
-  if (!existingContent.toLowerCase().includes('sitemap:')) {
+  if (!existingContent.toLowerCase().includes("sitemap:")) {
     enhanced += `\n\n# Sitemaps\nSitemap: ${baseUrl}/sitemap.xml\nSitemap: ${baseUrl}/sitemap-llm.xml`;
-  } else if (!existingContent.toLowerCase().includes('sitemap-llm')) {
+  } else if (!existingContent.toLowerCase().includes("sitemap-llm")) {
     enhanced += `\n\n# LLM-Optimized Sitemap\nSitemap: ${baseUrl}/sitemap-llm.xml`;
   }
 

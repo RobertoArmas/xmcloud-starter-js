@@ -1,6 +1,6 @@
 import { isDesignLibraryPreviewData } from "@sitecore-content-sdk/nextjs/editing";
 import { notFound } from "next/navigation";
-import { draftMode, headers } from "next/headers";
+import { draftMode } from "next/headers";
 import { SiteInfo } from "@sitecore-content-sdk/nextjs";
 import sites from ".sitecore/sites.json";
 import { routing } from "src/i18n/routing";
@@ -11,10 +11,8 @@ import components from ".sitecore/component-map";
 import Providers from "src/Providers";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-
-// Configure dynamic rendering to avoid SSR issues with client-side hooks
-// This ensures all pages are rendered on-demand rather than pre-rendered at build time
-export const dynamic = 'force-dynamic';
+import { getComponentData, getPage } from "lib/cached-sitecore-client";
+import { Suspense } from "react";
 
 type PageProps = {
   params: Promise<{
@@ -26,6 +24,35 @@ type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+async function EditingModePageContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const editingParams = await searchParams;
+  let page;
+  if (isDesignLibraryPreviewData(editingParams)) {
+    page = await client.getDesignLibraryData(editingParams);
+  } else {
+    page = await client.getPreview(editingParams);
+  }
+  if (!page) {
+    notFound();
+  }
+  const componentProps = await client.getComponentData(
+    page.layout,
+    {},
+    components
+  );
+  return (
+    <NextIntlClientProvider>
+      <Providers page={page} componentProps={componentProps}>
+        <Layout page={page} />
+      </Providers>
+    </NextIntlClientProvider>
+  );
+}
+
 export default async function Page({ params, searchParams }: PageProps) {
   const { site, locale, path } = await params;
   const draft = await draftMode();
@@ -36,14 +63,13 @@ export default async function Page({ params, searchParams }: PageProps) {
   // Fetch the page data from Sitecore
   let page;
   if (draft.isEnabled) {
-    const editingParams = await searchParams;
-    if (isDesignLibraryPreviewData(editingParams)) {
-      page = await client.getDesignLibraryData(editingParams);
-    } else {
-      page = await client.getPreview(editingParams);
-    }
+    return (
+      <Suspense fallback={<div>Loading editing mode page...</div>}>
+        <EditingModePageContent searchParams={searchParams} />
+      </Suspense>
+    );
   } else {
-    page = await client.getPage(path ?? [], { site, locale });
+    page = await getPage(path ?? [], { site, locale });
   }
 
   // If the page is not found, return a 404
@@ -52,11 +78,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   }
 
   // Fetch the component data from Sitecore (Likely will be deprecated)
-  const componentProps = await client.getComponentData(
-    page.layout,
-    {},
-    components
-  );
+  const componentProps = await getComponentData(page.layout, {}, components);
 
   return (
     <NextIntlClientProvider>
@@ -84,15 +106,21 @@ export const generateStaticParams = async () => {
       routing.locales.slice()
     );
   }
-  return [];
+  return [
+    {
+      site: scConfig.defaultSite,
+      locale: scConfig.defaultLanguage,
+      path: ["/"],
+    },
+  ];
 };
 
 // Metadata fields for the page.
 export const generateMetadata = async ({ params }: PageProps) => {
-  const headersList = await headers();
-  const host = headersList.get("host") || "";
+  const host = process.env.PUBLIC_URL || "";
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (host ? `${protocol}://${host}` : "");
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || (host ? `${protocol}://${host}` : "");
 
   const { path, site, locale } = await params;
 
@@ -101,7 +129,7 @@ export const generateMetadata = async ({ params }: PageProps) => {
   const canonicalUrl = baseUrl ? `${baseUrl}${pathSegment}` : undefined;
 
   // The same call as for rendering the page. Should be cached by default react behavior
-  const page = await client.getPage(path ?? [], { site, locale });
+  const page = await getPage(path ?? [], { site, locale });
   const fields = page?.layout.sitecore.route?.fields as RouteFields;
 
   // Parse keywords from comma-separated string to array

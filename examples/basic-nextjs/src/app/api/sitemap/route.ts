@@ -1,8 +1,6 @@
-import { createSitemapRouteHandler } from '@sitecore-content-sdk/nextjs/route-handler';
-import sites from '.sitecore/sites.json';
-import client from 'lib/sitecore-client';
-
-export const dynamic = 'force-dynamic';
+import { createSitemapRouteHandler } from "@sitecore-content-sdk/nextjs/route-handler";
+import sites from ".sitecore/sites.json";
+import client from "lib/sitecore-client";
 
 /**
  * API route for generating sitemap.xml

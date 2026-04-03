@@ -1,13 +1,12 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import sites from '.sitecore/sites.json';
-
-export const dynamic = 'force-dynamic';
+import { type NextRequest, NextResponse } from "next/server";
+import sites from ".sitecore/sites.json";
+import { headers } from "next/headers";
 
 const CACHE_MAX_AGE = 86400; // 24 hours
 
 /** Generates the ai.txt content with crawler permissions and AI endpoints. */
 function generateAiTxtContent(siteUrl: string): string {
-  const lastModified = new Date().toISOString().split('T')[0];
+  const lastModified = new Date().toISOString().split("T")[0];
 
   return `# AI Crawler Permissions for ${siteUrl}
 
@@ -48,8 +47,9 @@ Last-Modified: ${lastModified}
 
 /** Resolves the site URL from request headers or falls back to configured sites. */
 function resolveSiteUrl(request: NextRequest): string {
-  const host = request.headers.get('host') || request.headers.get('x-forwarded-host');
-  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+  const host =
+    request.headers.get("host") || request.headers.get("x-forwarded-host");
+  const protocol = request.headers.get("x-forwarded-proto") || "https";
 
   if (host) {
     return `${protocol}://${host}`;
@@ -65,6 +65,7 @@ function resolveSiteUrl(request: NextRequest): string {
 
 /** GET handler that serves the ai.txt file for AI crawlers. */
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  await headers();
   try {
     const siteUrl = resolveSiteUrl(request);
     const aiTxtContent = generateAiTxtContent(siteUrl);
@@ -72,18 +73,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return new NextResponse(aiTxtContent, {
       status: 200,
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': `public, max-age=${CACHE_MAX_AGE}, s-maxage=${CACHE_MAX_AGE}`,
-        'X-Content-Type-Options': 'nosniff',
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": `public, max-age=${CACHE_MAX_AGE}, s-maxage=${CACHE_MAX_AGE}`,
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error) {
-    console.error('Error generating ai.txt:', error);
+    console.error("Error generating ai.txt:", error);
 
-    return new NextResponse('# Error generating ai.txt\n', {
+    return new NextResponse("# Error generating ai.txt\n", {
       status: 500,
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
+        "Content-Type": "text/plain; charset=utf-8",
       },
     });
   }

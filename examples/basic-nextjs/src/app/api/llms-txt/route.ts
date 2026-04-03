@@ -1,6 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Serves the public llms.txt file for AI search engines and LLM consumption.
@@ -29,8 +27,8 @@ This site demonstrates core XM Cloud patterns: dynamic routing, layout data, and
 
   return new NextResponse(content, {
     headers: {
-      'Content-Type': 'text/markdown; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      "Content-Type": "text/markdown; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
 }

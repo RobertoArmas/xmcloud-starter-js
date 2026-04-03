@@ -1,14 +1,15 @@
-import Link from 'next/link';
-import { Metadata } from 'next';
-import { ErrorPage } from '@sitecore-content-sdk/nextjs';
-import client from 'lib/sitecore-client';
-import scConfig from 'sitecore.config';
-import Layout from 'src/Layout';
-import Providers from 'src/Providers';
+import Link from "next/link";
+import { Metadata } from "next";
+import { ErrorPage } from "@sitecore-content-sdk/nextjs";
+import client from "lib/sitecore-client";
+import scConfig from "sitecore.config";
+import Layout from "src/Layout";
+import Providers from "src/Providers";
+import { cacheLife, cacheTag } from "next/cache";
 
 // Metadata for 404 Not Found page
 export const metadata: Metadata = {
-  title: 'Page Not Found',
+  title: "Page Not Found",
   robots: {
     index: false,
     follow: false,
@@ -20,6 +21,9 @@ export const metadata: Metadata = {
 };
 
 export default async function NotFound() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("page", "sitecore-content");
   if (scConfig.defaultSite) {
     const page = await client.getErrorPage(ErrorPage.NotFound, {
       site: scConfig.defaultSite,

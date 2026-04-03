@@ -1,10 +1,4 @@
-import { NextResponse } from 'next/server';
-
-/**
- * Revalidation period for the service.json endpoint (1 hour)
- * Uses Incremental Static Regeneration for optimal caching
- */
-export const revalidate = 3600;
+import { NextResponse } from "next/server";
 
 /**
  * Represents a service or capability offered by the site
@@ -36,46 +30,46 @@ interface ServiceResponse {
  */
 const services: Service[] = [
   {
-    name: 'Starter Kit Scaffolding',
+    name: "Starter Kit Scaffolding",
     description:
-      'Provides a ready-to-use Next.js App Router project template for rapid XM Cloud development.',
-    category: 'Development',
+      "Provides a ready-to-use Next.js App Router project template for rapid XM Cloud development.",
+    category: "Development",
   },
   {
-    name: 'Content SDK Integration',
+    name: "Content SDK Integration",
     description:
-      'Delivers content from Sitecore XM Cloud using optimized API requests and server components.',
-    category: 'Content Delivery',
+      "Delivers content from Sitecore XM Cloud using optimized API requests and server components.",
+    category: "Content Delivery",
   },
   {
-    name: 'Multi-Locale Content Delivery',
+    name: "Multi-Locale Content Delivery",
     description:
-      'Deliver localized content in multiple languages (English and Canadian English) with automatic locale detection.',
-    category: 'Localization',
+      "Deliver localized content in multiple languages (English and Canadian English) with automatic locale detection.",
+    category: "Localization",
   },
   {
-    name: 'Component-Based Page Building',
+    name: "Component-Based Page Building",
     description:
-      'Build pages using modular, reusable components with multiple layout variants and styling options.',
-    category: 'Development',
+      "Build pages using modular, reusable components with multiple layout variants and styling options.",
+    category: "Development",
   },
   {
-    name: 'Responsive Image Optimization',
+    name: "Responsive Image Optimization",
     description:
-      'Automatically optimize and serve images in modern formats with responsive sizing for optimal performance.',
-    category: 'Performance',
+      "Automatically optimize and serve images in modern formats with responsive sizing for optimal performance.",
+    category: "Performance",
   },
   {
-    name: 'SEO Metadata Management',
+    name: "SEO Metadata Management",
     description:
-      'Manage page titles, descriptions, and Open Graph metadata for improved search engine visibility.',
-    category: 'SEO',
+      "Manage page titles, descriptions, and Open Graph metadata for improved search engine visibility.",
+    category: "SEO",
   },
   {
-    name: 'Content Preview and Editing',
+    name: "Content Preview and Editing",
     description:
-      'Preview content changes in real-time with integrated XM Cloud editing experience support.',
-    category: 'Content Management',
+      "Preview content changes in real-time with integrated XM Cloud editing experience support.",
+    category: "Content Management",
   },
 ];
 
@@ -108,7 +102,8 @@ export async function GET(): Promise<NextResponse<ServiceResponse>> {
 
   return NextResponse.json(response, {
     headers: {
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
+      "Cache-Control":
+        "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
     },
   });
 }
