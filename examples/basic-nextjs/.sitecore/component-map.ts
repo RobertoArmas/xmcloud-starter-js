@@ -1,20 +1,27 @@
 // Below are built-in components that are available in the app, it's recommended to keep them as is
 
-import { BYOCServerWrapper, NextjsContentSdkComponent, FEaaSServerWrapper } from '@sitecore-content-sdk/nextjs';
-import { Form } from '@sitecore-content-sdk/nextjs';
+import {
+  BYOCServerWrapper,
+  NextjsContentSdkComponent,
+  FEaaSServerWrapper,
+} from "@sitecore-content-sdk/nextjs";
+import { Form } from "@sitecore-content-sdk/nextjs";
 
 // end of built-in components
-import * as PartialDesignDynamicPlaceholder from 'src/components/partial-design-dynamic-placeholder/PartialDesignDynamicPlaceholder';
-import * as ContentBlockSiaVariantV3 from 'src/components/content/ContentBlock.SiaVariantV3';
-import * as ContentBlockSiaVariant from 'src/components/content/ContentBlock.SiaVariant';
-import * as ContentBlock from 'src/components/content/ContentBlock';
+import * as PartialDesignDynamicPlaceholder from "src/components/partial-design-dynamic-placeholder/PartialDesignDynamicPlaceholder";
+import * as ContentBlockSiaVariantV3 from "src/components/content/ContentBlock.SiaVariantV3";
+import * as ContentBlockSiaVariant from "src/components/content/ContentBlock.SiaVariant";
+import * as ContentBlock from "src/components/content/ContentBlock";
 
 export const componentMap = new Map<string, NextjsContentSdkComponent>([
-  ['BYOCWrapper', BYOCServerWrapper],
-  ['FEaaSWrapper', FEaaSServerWrapper],
-  ['Form', { ...Form, componentType: 'client' }],
-  ['PartialDesignDynamicPlaceholder', { ...PartialDesignDynamicPlaceholder }],
-  ['ContentBlock', { ...ContentBlockSiaVariantV3, ...ContentBlockSiaVariant, ...ContentBlock }],
+  ["BYOCWrapper", BYOCServerWrapper],
+  ["FEaaSWrapper", FEaaSServerWrapper],
+  ["Form", { ...Form, componentType: "client" }],
+  ["PartialDesignDynamicPlaceholder", { ...PartialDesignDynamicPlaceholder }],
+  [
+    "ContentBlock",
+    { ...ContentBlockSiaVariantV3, ...ContentBlockSiaVariant, ...ContentBlock },
+  ],
 ]);
 
 export default componentMap;
