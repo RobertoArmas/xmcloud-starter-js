@@ -34,19 +34,14 @@ export default async function Page({ params, searchParams }: PageProps) {
   let page;
   if (draft.isEnabled) {
     const editingParams = await searchParams;
-    let page;
     if (isDesignLibraryPreviewData(editingParams)) {
       page = await client.getDesignLibraryData(editingParams);
     } else {
       page = await client.getPreview(editingParams);
     }
-    if (!page) {
-      notFound();
-    }
   } else {
     page = await getPage(path ?? [], { site, locale });
   }
-
   // If the page is not found, return a 404
   if (!page) {
     notFound();
