@@ -12,7 +12,6 @@ import Providers from "src/Providers";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { getComponentData, getPage } from "lib/cached-sitecore-client";
-import { Suspense } from "react";
 
 type PageProps = {
   params: Promise<{
@@ -24,35 +23,6 @@ type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-async function EditingModePageContent({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const editingParams = await searchParams;
-  let page;
-  if (isDesignLibraryPreviewData(editingParams)) {
-    page = await client.getDesignLibraryData(editingParams);
-  } else {
-    page = await client.getPreview(editingParams);
-  }
-  if (!page) {
-    notFound();
-  }
-  const componentProps = await client.getComponentData(
-    page.layout,
-    {},
-    components
-  );
-  return (
-    <NextIntlClientProvider>
-      <Providers page={page} componentProps={componentProps}>
-        <Layout page={page} />
-      </Providers>
-    </NextIntlClientProvider>
-  );
-}
-
 export default async function Page({ params, searchParams }: PageProps) {
   const { site, locale, path } = await params;
   const draft = await draftMode();
@@ -63,11 +33,16 @@ export default async function Page({ params, searchParams }: PageProps) {
   // Fetch the page data from Sitecore
   let page;
   if (draft.isEnabled) {
-    return (
-      <Suspense fallback={<div>Loading editing mode page...</div>}>
-        <EditingModePageContent searchParams={searchParams} />
-      </Suspense>
-    );
+    const editingParams = await searchParams;
+    let page;
+    if (isDesignLibraryPreviewData(editingParams)) {
+      page = await client.getDesignLibraryData(editingParams);
+    } else {
+      page = await client.getPreview(editingParams);
+    }
+    if (!page) {
+      notFound();
+    }
   } else {
     page = await getPage(path ?? [], { site, locale });
   }
