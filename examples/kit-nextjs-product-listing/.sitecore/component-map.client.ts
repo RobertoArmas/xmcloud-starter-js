@@ -16,6 +16,7 @@ import * as TestimonialCarousel from 'src/components/testimonial-carousel/Testim
 import * as NavigationMenuToggleclient from 'src/components/sxa/NavigationMenuToggle.client';
 import * as NavigationListclient from 'src/components/sxa/NavigationList.client';
 import * as LinkList from 'src/components/sxa/LinkList';
+import * as ContentBlock from 'src/components/sxa/ContentBlock';
 import * as ButtonNavigationclient from 'src/components/sxa/ButtonNavigation.client';
 import * as SubscriptionBanner from 'src/components/subscription-banner/SubscriptionBanner';
 import * as SlideCarouseldev from 'src/components/slide-carousel/SlideCarousel.dev';
@@ -34,6 +35,25 @@ import * as MiniCart from 'src/components/site-three/non-sitecore/MiniCart';
 import * as SecondaryNavigation from 'src/components/secondary-navigation/SecondaryNavigation';
 import * as SearchExperienceLoadMore from 'src/components/search-experience/SearchExperience.LoadMore';
 import * as SearchExperience from 'src/components/search-experience/SearchExperience';
+import * as useSearchField from 'src/components/search-experience/search-components/useSearchField';
+import * as useRouter from 'src/components/search-experience/search-components/useRouter';
+import * as useParams from 'src/components/search-experience/search-components/useParams';
+import * as useEvent from 'src/components/search-experience/search-components/useEvent';
+import * as useDebounce from 'src/components/search-experience/search-components/useDebounce';
+import * as SearchSkeletonItem from 'src/components/search-experience/search-components/SearchSkeletonItem';
+import * as SearchPagination from 'src/components/search-experience/search-components/SearchPagination';
+import * as SearchItemCommon from 'src/components/search-experience/search-components/SearchItemCommon';
+import * as SearchInput from 'src/components/search-experience/search-components/SearchInput';
+import * as SearchError from 'src/components/search-experience/search-components/SearchError';
+import * as SearchEmptyResults from 'src/components/search-experience/search-components/SearchEmptyResults';
+import * as SearchItemTitle from 'src/components/search-experience/search-components/SearchItem/SearchItemTitle';
+import * as SearchItemTags from 'src/components/search-experience/search-components/SearchItem/SearchItemTags';
+import * as SearchItemSummary from 'src/components/search-experience/search-components/SearchItem/SearchItemSummary';
+import * as SearchItemSubTitle from 'src/components/search-experience/search-components/SearchItem/SearchItemSubTitle';
+import * as SearchItemLink from 'src/components/search-experience/search-components/SearchItem/SearchItemLink';
+import * as SearchItemImage from 'src/components/search-experience/search-components/SearchItem/SearchItemImage';
+import * as SearchItemCategory from 'src/components/search-experience/search-components/SearchItem/SearchItemCategory';
+import * as index from 'src/components/search-experience/search-components/SearchItem/index';
 import * as PromoAnimatedImageRightdev from 'src/components/promo-animated/PromoAnimatedImageRight.dev';
 import * as PromoAnimatedDefaultdev from 'src/components/promo-animated/PromoAnimatedDefault.dev';
 import * as PromoAnimated from 'src/components/promo-animated/PromoAnimated';
@@ -118,6 +138,7 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['NavigationMenuToggle', { ...NavigationMenuToggleclient }],
   ['NavigationList', { ...NavigationListclient }],
   ['LinkList', { ...LinkList }],
+  ['ContentBlock', { ...ContentBlock }],
   ['ButtonNavigation', { ...ButtonNavigationclient }],
   ['SubscriptionBanner', { ...SubscriptionBanner }],
   ['SlideCarousel', { ...SlideCarouseldev }],
@@ -135,6 +156,25 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['MiniCart', { ...MiniCart }],
   ['SecondaryNavigation', { ...SecondaryNavigation }],
   ['SearchExperience', { ...SearchExperienceLoadMore, ...SearchExperience }],
+  ['useSearchField', { ...useSearchField }],
+  ['useRouter', { ...useRouter }],
+  ['useParams', { ...useParams }],
+  ['useEvent', { ...useEvent }],
+  ['useDebounce', { ...useDebounce }],
+  ['SearchSkeletonItem', { ...SearchSkeletonItem }],
+  ['SearchPagination', { ...SearchPagination }],
+  ['SearchItemCommon', { ...SearchItemCommon }],
+  ['SearchInput', { ...SearchInput }],
+  ['SearchError', { ...SearchError }],
+  ['SearchEmptyResults', { ...SearchEmptyResults }],
+  ['SearchItemTitle', { ...SearchItemTitle }],
+  ['SearchItemTags', { ...SearchItemTags }],
+  ['SearchItemSummary', { ...SearchItemSummary }],
+  ['SearchItemSubTitle', { ...SearchItemSubTitle }],
+  ['SearchItemLink', { ...SearchItemLink }],
+  ['SearchItemImage', { ...SearchItemImage }],
+  ['SearchItemCategory', { ...SearchItemCategory }],
+  ['index', { ...index }],
   ['PromoAnimatedImageRight', { ...PromoAnimatedImageRightdev }],
   ['PromoAnimatedDefault', { ...PromoAnimatedDefaultdev }],
   ['PromoAnimated', { ...PromoAnimated }],

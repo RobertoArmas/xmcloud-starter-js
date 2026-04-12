@@ -2,7 +2,7 @@
 
 import { CdpHelper, useSitecore } from '@sitecore-content-sdk/nextjs';
 import { useEffect } from 'react';
-import { pageView } from '@sitecore-cloudsdk/events/browser';
+import { pageView } from '@sitecore-content-sdk/events';
 import config from 'sitecore.config';
 import { JSX } from 'react';
 
@@ -41,6 +41,11 @@ const CdpPageView = (): JSX.Element => {
       return;
     }
 
+    // Skip page view tracking when Edge API is not configured
+    if (!config?.api?.edge?.clientContextId) {
+      return;
+    }
+
     const language = route.itemLanguage || config.defaultLanguage;
     const scope = config.personalize?.scope;
 
@@ -57,7 +62,7 @@ const CdpPageView = (): JSX.Element => {
       page: route.name,
       pageVariantId,
       language,
-    }).catch((e) => console.debug(e));
+    }).catch(() => {});
   }, [mode, route, context.variantId, siteName]);
 
   return <></>;

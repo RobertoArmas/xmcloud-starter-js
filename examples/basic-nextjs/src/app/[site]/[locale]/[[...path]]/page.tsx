@@ -1,6 +1,6 @@
 import { isDesignLibraryPreviewData } from "@sitecore-content-sdk/nextjs/editing";
 import { notFound } from "next/navigation";
-import { draftMode } from "next/headers";
+import { draftMode, headers } from "next/headers";
 import { SiteInfo } from "@sitecore-content-sdk/nextjs";
 import sites from ".sitecore/sites.json";
 import { routing } from "src/i18n/routing";
@@ -11,10 +11,7 @@ import components from ".sitecore/component-map";
 import Providers from "src/Providers";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-
-// Configure dynamic rendering to avoid SSR issues with client-side hooks
-// This ensures all pages are rendered on-demand rather than pre-rendered at build time
-export const dynamic = 'force-dynamic';
+import { getBaseUrl } from "lib/utils";
 
 type PageProps = {
   params: Promise<{
@@ -55,7 +52,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   const componentProps = await client.getComponentData(
     page.layout,
     {},
-    components
+    components,
   );
 
   return (
@@ -81,7 +78,7 @@ export const generateStaticParams = async () => {
       : sites.map((site: SiteInfo) => site.name);
     return await client.getAppRouterStaticParams(
       allowedSites,
-      routing.locales.slice()
+      routing.locales.slice(),
     );
   }
   return [];
@@ -89,14 +86,44 @@ export const generateStaticParams = async () => {
 
 // Metadata fields for the page.
 export const generateMetadata = async ({ params }: PageProps) => {
+  const baseUrl = getBaseUrl();
+
   const { path, site, locale } = await params;
+
+  // Canonical URL: base URL + content path only (no site/locale segments)
+  const pathSegment = path?.length ? `/${path.join("/")}` : "";
+  const canonicalUrl = baseUrl ? `${baseUrl}${pathSegment}` : undefined;
 
   // The same call as for rendering the page. Should be cached by default react behavior
   const page = await client.getPage(path ?? [], { site, locale });
+  const fields = page?.layout.sitecore.route?.fields as RouteFields;
+
+  // Parse keywords from comma-separated string to array
+  const keywordsString = fields?.metadataKeywords?.value?.toString() || "";
+  const keywords = keywordsString
+    ? keywordsString.split(",").map((k: string) => k.trim())
+    : [];
+
   return {
-    title:
-      (
-        page?.layout.sitecore.route?.fields as RouteFields
-      )?.Title?.value?.toString() || "Page",
+    title: fields?.Title?.value?.toString() || "Page",
+    description:
+      fields?.ogDescription?.value?.toString() ||
+      fields?.metadataDescription?.value?.toString() ||
+      "Sitecore Next.js Basic Example",
+    keywords,
+    ...(canonicalUrl && {
+      alternates: {
+        canonical: canonicalUrl,
+      },
+    }),
+    openGraph: {
+      title: fields?.ogTitle?.value?.toString() || "Page",
+      description:
+        fields?.ogDescription?.value?.toString() ||
+        fields?.metadataDescription?.value?.toString() ||
+        "Sitecore Next.js Basic Example",
+      url: canonicalUrl,
+      images: fields?.ogImage?.value?.src || fields?.thumbnailImage?.value?.src,
+    },
   };
 };
