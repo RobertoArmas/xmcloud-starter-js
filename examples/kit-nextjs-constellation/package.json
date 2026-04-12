@@ -1,6 +1,6 @@
 {
   "name": "kit-nextjs-constellation",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "config": {
     "appName": "kit-nextjs-constellation",
@@ -21,6 +21,15 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@constellation4sitecore-content-sdk/data": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/enhancers": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/labels": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/mapper": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/navigation": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/nextjs": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/page-analytics-scripts": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/page-tagging": "~2.0.0-beta.6",
+    "@constellation4sitecore-content-sdk/security": "~2.0.0-beta.6",
     "@sitecore-content-sdk/analytics-core": "^2.0.0",
     "@sitecore-content-sdk/events": "^2.0.0",
     "@sitecore-content-sdk/nextjs": "^2.0.0",
