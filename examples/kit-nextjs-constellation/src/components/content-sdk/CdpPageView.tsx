@@ -1,8 +1,8 @@
+'use client';
+import { useEffect, JSX } from 'react';
 import { CdpHelper, useSitecore } from '@sitecore-content-sdk/nextjs';
-import { useEffect } from 'react';
-import { pageView } from '@sitecore-cloudsdk/events/browser';
+import { pageView } from '@sitecore-content-sdk/events';
 import config from 'sitecore.config';
-import { JSX } from 'react';
 
 /**
  * This is the CDP page view component.
